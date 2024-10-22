@@ -1,9 +1,8 @@
-// src/components/ContactList.tsx
 import React, { useEffect, useState } from 'react'
 import { getContacts } from '../../api/blipApi'
 
 interface Contact {
-  id: string
+  identity: string
   name: string
 }
 
@@ -11,7 +10,7 @@ interface ContactListProps {
   apiKey: string
 }
 
-const ContactList: React.FC<ContactListProps> = ({ apiKey }) => {
+function ContactList({ apiKey }: ContactListProps) {
   const [contacts, setContacts] = useState<Contact[]>([])
   const [page, setPage] = useState<number>(1)
   const [loading, setLoading] = useState<boolean>(true)
@@ -19,7 +18,7 @@ const ContactList: React.FC<ContactListProps> = ({ apiKey }) => {
   useEffect(() => {
     const fetchContacts = async () => {
       const data = await getContacts(apiKey, page, 10)
-      setContacts(data.contacts)
+      setContacts(data.resource.items)
       setLoading(false)
     }
 
@@ -33,8 +32,8 @@ const ContactList: React.FC<ContactListProps> = ({ apiKey }) => {
       <h2>Contatos</h2>
       <ul>
         {contacts.map(contact => (
-          <li key={contact.id}>
-            <a href={`/contato/${contact.id}`}>{contact.name}</a>
+          <li key={contact.identity}>
+            <a href={`/contato/${contact.identity}`}>{contact.name}</a>
           </li>
         ))}
       </ul>
