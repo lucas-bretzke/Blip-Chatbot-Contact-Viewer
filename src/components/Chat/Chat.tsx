@@ -1,34 +1,84 @@
-// src/components/Chat.tsx
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getMessages } from '../../api/blipApi'
+import styled from 'styled-components'
+
+interface Message {
+  sender: string
+  content: string
+  direction: 'received' | 'sent' 
+}
 
 const Chat: React.FC<{ apiKey: string }> = ({ apiKey }) => {
-  // const { id } = useParams<{ id: string }>()
-  const { id } = useParams<{ id: any }>()
-  const [messages, setMessages] = useState<any[]>([]) // Tipo genérico, ajuste conforme necessário
+  const { id = '' } = useParams<{ id: string }>()
+  const [messages, setMessages] = useState<Message[]>([])
 
   useEffect(() => {
     const fetchMessages = async () => {
-      const data = await getMessages(apiKey, id)
-      setMessages(data.messages)
+      try {
+        const data = await getMessages(apiKey, id)
+        if (data?.resource?.items) {
+          setMessages(data.resource.items)
+        } else {
+          console.error('Estrutura de resposta inesperada: ', data)
+        }
+      } catch (error) {
+        console.error('Erro ao buscar mensagens: ', error)
+      }
     }
 
     fetchMessages()
   }, [apiKey, id])
 
   return (
-    <div>
+    <ChatContainer>
       <h2>Conversas com Contato {id}</h2>
-      <ul>
-        {messages.map((msg, index) => (
-          <li key={index}>
-            {msg.sender}: {msg.text}
-          </li>
-        ))}
-      </ul>
-    </div>
+      <MessageList>
+        {messages.length > 0 ? (
+          messages.map((msg, index) => (
+            <MessageItem key={index} direction={msg.direction}>
+              {msg.sender}: {msg.content}
+            </MessageItem>
+          ))
+        ) : (
+          <li>Nenhuma mensagem encontrada.</li>
+        )}
+      </MessageList>
+    </ChatContainer>
   )
 }
 
 export default Chat
+
+const ChatContainer = styled.div`
+  padding: 20px;
+`
+
+const MessageList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`
+
+const MessageItem = styled.li<{ direction: 'received' | 'sent' }>`
+  padding: 10px;
+  margin: 5px 0;
+  max-width: 60%;
+  border-radius: 10px;
+  color: #fff;
+
+  ${({ direction }) =>
+    direction === 'received'
+      ? `
+    background-color: #007bff;
+    align-self: flex-start;
+    text-align: left;
+    margin-right: auto;
+  `
+      : `
+    background-color: #28a745;
+    align-self: flex-end;
+    text-align: right;
+    margin-left: auto;
+  `};
+`
