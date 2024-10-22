@@ -1,8 +1,19 @@
-import React, { useEffect, useState } from 'react'
-import styled from 'styled-components'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+
+/**
+ * Services.
+ */
 import { getContacts } from '../../api/blipApi'
 
+/**
+ * Styles.
+ */
+import styled from 'styled-components'
+
+/**
+ * Types.
+ */
 interface Contact {
   identity: string
   name: string
@@ -12,16 +23,26 @@ interface ContactListProps {
   apiKey: string
 }
 
-function ContactList({ apiKey }: ContactListProps) {
-  const [contacts, setContacts] = useState<Contact[]>([])
+/**
+ * Screen.
+ */
+export default function ContactList({ apiKey }: ContactListProps) {
   const [page, setPage] = useState<number>(1)
   const [loading, setLoading] = useState<boolean>(true)
+  const [contacts, setContacts] = useState<Contact[]>([])
+  const [hasNextPage, setHasNextPage] = useState<boolean>(false)
+
+  const contactsPerPage = 10
 
   useEffect(() => {
     const fetchContacts = async () => {
-      const data = await getContacts(apiKey, page, 5)
+      setLoading(true)
+      const data = await getContacts(apiKey, page, contactsPerPage)
+
       setContacts(data.resource.items)
       setLoading(false)
+
+      setHasNextPage(data.resource.items.length === contactsPerPage)
     }
 
     fetchContacts()
@@ -31,35 +52,51 @@ function ContactList({ apiKey }: ContactListProps) {
 
   return (
     <Container>
-      <Title>Contatos</Title>
+      <Title>Contatos - Página {page}</Title>
       <ContactListContainer>
-        {contacts.map(contact => (
-          <ContactItem key={contact.identity}>
-            <StyledLink
-              to={`/contato/${contact.identity}`}
-              state={{ name: contact.name }}
-            >
-              {contact.name}
-            </StyledLink>
-          </ContactItem>
-        ))}
+        {contacts.length > 0 ? (
+          contacts.map(contact => (
+            <ContactItem key={contact.identity}>
+              <StyledLink
+                to={`/contato/${contact.identity}`}
+                state={{ name: contact.name }}
+              >
+                {contact.name}
+              </StyledLink>
+            </ContactItem>
+          ))
+        ) : (
+          <li>Nenhum contato encontrado.</li>
+        )}
       </ContactListContainer>
-      <ButtonContainer>
-        <Button onClick={() => setPage(prev => Math.max(prev - 1, 1))}>
-          Anterior
-        </Button>
-        <Button onClick={() => setPage(prev => prev + 1)}>Próximo</Button>
-      </ButtonContainer>
+
+      {contacts.length > 0 && (
+        <ButtonContainer>
+          <Button
+            onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+            disabled={page === 1}
+          >
+            Anterior
+          </Button>
+          <PageIndicator>Página {page}</PageIndicator>
+          <Button
+            onClick={() => setPage(prev => prev + 1)}
+            disabled={!hasNextPage}
+          >
+            Próximo
+          </Button>
+        </ButtonContainer>
+      )}
     </Container>
   )
 }
-
-export default ContactList
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 50%;
+  min-width: 300px;
   margin: 20px;
   padding: 20px;
   background-color: #f0f0f0;
@@ -67,6 +104,11 @@ const Container = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-width: 600px;
   margin: 0 auto;
+
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `
 
 const Title = styled.h2`
@@ -99,6 +141,7 @@ const StyledLink = styled(Link)`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
   margin-top: 20px;
 `
@@ -121,6 +164,11 @@ const Button = styled.button`
     background-color: #ccc;
     cursor: not-allowed;
   }
+`
+
+const PageIndicator = styled.div`
+  font-size: 16px;
+  margin: 0 10px;
 `
 
 const Loading = styled.div`
