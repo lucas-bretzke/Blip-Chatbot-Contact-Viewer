@@ -1,16 +1,16 @@
 // src/routes.tsx
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import Login from '../components/Login/Login'
-import ContactList from '../components/ContactList/ContactList'
-import Chat from '../components/Chat/Chat'
+import Login from '../components/Login'
+import ContactList from '../components/ContactList'
+import Chat from '../components/Chat'
 
 interface RoutesProps {
   apiKey: string | null
   handleLogin: (key: string) => void
 }
 
-const AppRoutes: React.FC<RoutesProps> = ({ apiKey, handleLogin }) => {
+function AppRoutes({ apiKey, handleLogin }: RoutesProps) {
   return (
     <Routes>
       {/* Rota de login */}

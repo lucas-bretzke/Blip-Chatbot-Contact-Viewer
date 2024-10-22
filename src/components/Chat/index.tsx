@@ -9,7 +9,7 @@ interface Message {
   direction: 'received' | 'sent'
 }
 
-const Chat: React.FC<{ apiKey: string }> = ({ apiKey }) => {
+function Chat({ apiKey }: { apiKey: string }) {
   const location = useLocation()
   const { id = '' } = useParams<{ id: string }>()
   const [messages, setMessages] = useState<Message[]>([])
