@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { getMessages } from '../../api/blipApi'
 import styled from 'styled-components'
 
 interface Message {
   sender: string
   content: string
-  direction: 'received' | 'sent' 
+  direction: 'received' | 'sent'
 }
 
 const Chat: React.FC<{ apiKey: string }> = ({ apiKey }) => {
+  const location = useLocation()
   const { id = '' } = useParams<{ id: string }>()
   const [messages, setMessages] = useState<Message[]>([])
+  const { name } = location.state || { name: 'Contato desconhecido' }
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -32,7 +34,9 @@ const Chat: React.FC<{ apiKey: string }> = ({ apiKey }) => {
 
   return (
     <ChatContainer>
-      <h2>Conversas com Contato {id}</h2>
+      <h2>
+        Conversas com: <span style={{ color: '#007bff' }}>{name}</span>
+      </h2>
       <MessageList>
         {messages.length > 0 ? (
           messages.map((msg, index) => (
