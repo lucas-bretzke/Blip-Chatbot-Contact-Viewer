@@ -1,22 +1,27 @@
-// src/components/Login.tsx
 import React, { useState } from 'react'
+
+/**
+ * Styles.
+ */
 import styled from 'styled-components'
 
+/**
+ * Types.
+ */
 interface LoginProps {
   onLogin: (apiKey: string) => void
 }
 
-function Login({ onLogin }: LoginProps) {
+/**
+ * Screen.
+ */
+export default function Login({ onLogin }: LoginProps) {
   const [apiKey, setApiKey] = useState<string>('')
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     onLogin(apiKey)
   }
-
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setApiKey(e.target.value)
-  // }
 
   return (
     <LoginForm onSubmit={handleSubmit}>
@@ -32,8 +37,6 @@ function Login({ onLogin }: LoginProps) {
     </LoginForm>
   )
 }
-
-export default Login
 
 const LoginForm = styled.form`
   display: flex;

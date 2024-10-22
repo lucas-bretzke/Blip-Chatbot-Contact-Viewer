@@ -1,16 +1,21 @@
-// src/routes.tsx
-import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
+
+/**
+ * Screens.
+ */
 import Login from '../components/Login'
 import ContactList from '../components/ContactList'
 import Chat from '../components/Chat'
 
+/**
+ * Types.
+ */
 interface RoutesProps {
   apiKey: string | null
   handleLogin: (key: string) => void
 }
 
-function AppRoutes({ apiKey, handleLogin }: RoutesProps) {
+export default function AppRoutes({ apiKey, handleLogin }: RoutesProps) {
   return (
     <Routes>
       {/* Rota de login */}
@@ -35,5 +40,3 @@ function AppRoutes({ apiKey, handleLogin }: RoutesProps) {
     </Routes>
   )
 }
-
-export default AppRoutes

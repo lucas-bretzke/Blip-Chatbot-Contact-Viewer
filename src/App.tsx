@@ -1,9 +1,15 @@
-// src/App.tsx
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
+
+/**
+ * Routes.
+ */
 import AppRoutes from './routes'
 
-function App() {
+/**
+ * App.
+ */
+export default function App() {
   const [apiKey, setApiKey] = useState<string | null>(null)
 
   useEffect(() => {
@@ -24,5 +30,3 @@ function App() {
     </Router>
   )
 }
-
-export default App

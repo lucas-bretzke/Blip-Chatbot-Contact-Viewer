@@ -1,15 +1,29 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
+
+/**
+ * Services.
+ */
 import { getMessages } from '../../api/blipApi'
+
+/**
+ * Styles.
+ */
 import styled from 'styled-components'
 
+/**
+ * Types.
+ */
 interface Message {
   sender: string
   content: string
   direction: 'received' | 'sent'
 }
 
-function Chat({ apiKey }: { apiKey: string }) {
+/**
+ * Screen
+ */
+export default function Chat({ apiKey }: { apiKey: string }) {
   const location = useLocation()
   const { id = '' } = useParams<{ id: string }>()
   const [messages, setMessages] = useState<Message[]>([])
@@ -19,11 +33,10 @@ function Chat({ apiKey }: { apiKey: string }) {
     const fetchMessages = async () => {
       try {
         const data = await getMessages(apiKey, id)
-        if (data?.resource?.items) {
-          setMessages(data.resource.items)
-        } else {
-          console.error('Estrutura de resposta inesperada: ', data)
-        }
+
+        data?.resource?.items
+          ? setMessages(data.resource.items)
+          : console.error('Estrutura de resposta inesperada: ', data)
       } catch (error) {
         console.error('Erro ao buscar mensagens: ', error)
       }
@@ -51,8 +64,6 @@ function Chat({ apiKey }: { apiKey: string }) {
     </ChatContainer>
   )
 }
-
-export default Chat
 
 const ChatContainer = styled.div`
   padding: 20px;
