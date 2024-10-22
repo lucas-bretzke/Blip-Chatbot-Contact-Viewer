@@ -26,14 +26,11 @@ export const getContacts = async (
     },
     {
       headers: {
-        Authorization: `key bWV1cHJpbWVpcm9jaGF0Ym90MzM6WWk2WXhFUGJtNzBJREVXcDNnaHM=`,
+        Authorization: `key ${apiKey}`,
         'Content-Type': 'application/json'
       }
     }
   )
-
-  const contatos = response.data.resource.items
-  console.log('Data', response.data.resource.items)
 
   return response.data
 }
@@ -49,13 +46,12 @@ export const getMessages = async (apiKey: string, contactId: string) => {
 
     const response = await axios.post(API_BASE_URL, requestBody, {
       headers: {
-        // Authorization: `key ${apiKey}`,
-        Authorization: `${apiKey}`,
+        Authorization: `key ${apiKey}`,
         'Content-Type': 'application/json'
       }
     })
     console.log('res: ', response.data.resource.items)
-    return response.data 
+    return response.data
   } catch (error) {
     console.error('Erro ao buscar as mensagens: ', error)
     throw error
